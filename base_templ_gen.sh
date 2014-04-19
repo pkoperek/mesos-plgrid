@@ -44,7 +44,7 @@ TEMPLATE_ID=`onetemplate create $OUTTMP_F | grep ID | awk -F':' '{print $2}'|tr 
 echo "onetemplate delete ${TEMPLATE_ID}" >> ${CLEAN_UP}
 echo "Done. Template ID: ${TEMPLATE_ID}"
 
-echo -n "Starting base node for customization..."
+echo "Starting base node for customization..."
 VM_ID=`onetemplate instantiate ${TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
 echo "onevm shutdown $VM_ID" >> ${CLEAN_UP}
 echo "onevm delete $VM_ID" >> ${CLEAN_UP}
