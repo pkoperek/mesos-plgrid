@@ -120,7 +120,7 @@ else
 
 	echo "Executing installation script..."
 
-	ssh -oStrictHostKeyChecking=no -p "$MASTER_PORT_OUT" root@"${MASTER_IP_OUT}" 'chmod +x mesos_install.sh && ./mesos_install.sh'
+	ssh -oStrictHostKeyChecking=no -p "$MASTER_PORT_OUT" root@"${MASTER_IP_OUT}" 'chmod +x mesos_install.sh && ./mesos_install.sh' >& mesos_installation.log
 
 fi
 
