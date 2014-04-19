@@ -14,7 +14,7 @@ function waitUntilState {
 	local VM_STATUS_TO_WAIT=$2
 	getStatus ${VM_ID} VM_STATUS
 	while [ "$VM_STATUS" != "$VM_STATUS_TO_WAIT" ]; do
-		echo "Waiting for machine $VM_ID to start ($VM_STATUS)..."
+		echo "Waiting for machine $VM_ID to get to $VM_STATUS_TO_WAIT ($VM_STATUS)..."
 		sleep 5
 		getStatus ${VM_ID} VM_STATUS
 	done
@@ -50,6 +50,23 @@ CONTEXT = [
 ]
 _EOF_
 ) > $OUTPUT_FILE
+}
+
+function uploadFile {
+	set +eu
+	local IP="$1"
+	local PORT="$2"
+	local FILE="$3"
+
+	SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -P ${PORT} ${FILE} root@${IP}:${FILE}"
+         
+	$SCP
+	while [ "$?" != "0" ]; do
+        	echo "Retrying ..." 
+        	sleep 3
+        	$SCP
+	done
+	set -eu
 }
 
 # test
