@@ -79,11 +79,14 @@ echo "Done."
 
 echo -n "Upload customized templates..."
 MASTER_TEMPLATE_ID=`onetemplate create $MASTER_TMP_OUT | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+echo "onetemplate delete ${MASTER_TEMPLATE_ID}" >> ${CLEAN_UP}
 SLAVE_TEMPLATE_ID=`onetemplate create $SLAVE_TMP_OUT | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+echo "onetemplate delete ${SLAVE_TEMPLATE_ID}" >> ${CLEAN_UP}
 echo "Done."
 
 echo -n "Starting master..."
 MASTER_VM_ID=`onetemplate instantiate ${BASE_TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+echo "onevm shutdown $MASTER_VM_ID" >> ${CLEAN_UP}
 waitUntilState $MASTER_VM_ID "ACTIVE"
 MASTER_IP=`onevm show ${MASTER_VM_ID} |grep IP|awk -F'"' '{print $2}'`
 echo "Done. Master VM ID: ${MASTER_VM_ID} / IP: ${MASTER_IP}"
