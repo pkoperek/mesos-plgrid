@@ -15,17 +15,15 @@ fi
 
 set -u
 
-TS=`date +%s`
-OUTTMP_F="/tmp/onetmptempl.$USER.$TS"
-
-HNAME=${CLUSTER_NAME}-master
-
 if [ ! -f ~/.ssh/id_rsa.pub ]
 then
-  echo 'Error - could not found generated key'
+  echo "Error - could not find generated key"
   exit
 fi
 
+TS=`date +%s`
+OUTTMP_F="/tmp/onetmptempl.$USER.$TS"
+HNAME=${CLUSTER_NAME}-master
 SSHKEY=`cat ~/.ssh/id_rsa.pub`
 TEMPLATE_NAME="$CLUSTER_NAME-master-$TS"
 
