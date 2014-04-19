@@ -22,10 +22,14 @@ then
 fi
 
 TS=`date +%s`
-OUTTMP_F="/tmp/onetmptempl.$USER.$TS"
+OUTTMP_F="/tmp/base.$USER.$TS"
+MASTER_TMP_OUT="/tmp/master.$USER.$TS"
+SLAVE_TMP_OUT="/tmp/slave.$USER.$TS"
 HNAME=${CLUSTER_NAME}-master
 SSHKEY=`cat ~/.ssh/id_rsa.pub`
-TEMPLATE_NAME="$CLUSTER_NAME-master-$TS"
+TEMPLATE_NAME="$CLUSTER_NAME-base-$TS"
+MASTER_TEMPLATE_NAME="$CLUSTER_NAME-master-$TS"
+SLAVE_TEMPLATE_NAME="$CLUSTER_NAME-slave-$TS"
 
 echo -n "Generating base template ($TEMPLATE_NAME)..."
 generateTemplate "$TEMPLATE_NAME" "$IMGID" "$NETID" "$HNAME" "$SSHKEY" "$OUTTMP_F"
@@ -53,29 +57,8 @@ BASE_IP=`onevm show ${BASE_VM_ID} |grep IP|awk -F'"' '{print $2}'`
 waitUntilState $BASE_VM_ID "ACTIVE"
 echo "Done. Internal IP: ${BASE_IP}"
 
-echo -n "Forwarding ssh..."
-IPPORT_LINE=`expect -c "log_file expect.log
-	spawn oneport -a $BASE_IP -p 22 
-	expect \"Username:  \" 
-	send $USER\n
-	expect \"Password:  \"
-	send $PASS\n
-	interact
-"`
-echo "Done."
-
-BASE_IPPORT_OUT=`echo "$IPPORT_LINE"|grep ">"| awk -F"->" '{print $1}'`
-BASE_IP_OUT=`echo "$BASE_IPPORT_OUT"|awk -F":" '{print $1}'|tr -d ' '`
-BASE_IP_OUT=`echo "$BASE_IP_OUT"|awk '{print $1}'`
-BASE_PORT_OUT=`echo "$BASE_IPPORT_OUT"|awk -F":" '{print $2}'|tr -d ' '`
-
-echo "Master access forwarded to: $BASE_IP_OUT $BASE_PORT_OUT (\"ssh -p "$BASE_PORT_OUT" root@"$BASE_IP_OUT"\")"
-echo "Copying installation script ..."
-uploadFile "${BASE_IP_OUT}" "${BASE_PORT_OUT}" "mesos_install.sh"
-echo "Done."
-
-echo -n "Executing installation script..."
-ssh -oStrictHostKeyChecking=no -p "$BASE_PORT_OUT" root@"${BASE_IP_OUT}" 'chmod +x mesos_install.sh && ./mesos_install.sh' >& mesos_installation.log
+echo "Setting up base VM..."
+setupVM "$USER" "$PASS" "$BASE_IP" "mesos_install.sh" 
 echo "Done."
 
 echo "Storing mesos-ready image..."
@@ -89,13 +72,25 @@ onevm shutdown $BASE_VM_ID
 waitUntilState $BASE_VM_ID "DONE"
 echo "Done."
 
-echo -n "Generating base template..."
-generateTemplate "$TEMPLATE_NAME" "$BASE_IMAGE_ID" "$NETID" "$HNAME" "$SSHKEY" "$OUTTMP_F"
+echo -n "Generating templates for customized image..."
+generateTemplate "$MASTER_TEMPLATE_NAME" "$BASE_IMAGE_ID" "$NETID" "master" "$SSHKEY" "$MASTER_TMP_OUT"
+generateTemplate "$SLAVE_TEMPLATE_NAME" "$BASE_IMAGE_ID" "$NETID" "slave" "$SSHKEY" "$SLAVE_TMP_OUT"
+echo "Done."
+
+echo -n "Upload customized templates..."
+MASTER_TEMPLATE_ID=`onetemplate create $MASTER_TMP_OUT | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+SLAVE_TEMPLATE_ID=`onetemplate create $SLAVE_TMP_OUT | grep ID | awk -F':' '{print $2}'|tr -d ' '`
 echo "Done."
 
 echo -n "Starting master..."
+MASTER_VM_ID=`onetemplate instantiate ${BASE_TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+waitUntilState $MASTER_VM_ID "ACTIVE"
+MASTER_IP=`onevm show ${MASTER_VM_ID} |grep IP|awk -F'"' '{print $2}'`
+echo "Done. Master VM ID: ${MASTER_VM_ID} / IP: ${MASTER_IP}"
 
-
+echo "Setting up master VM..."
+setupVM "$USER" "$PASS" "$MASTER_IP" "master_setup.sh"
+echo "Done."
 
 echo "Cleaning up ($OUTTMP_F)"
-rm -f $OUTTMP_F expect.log
+rm -f $OUTTMP_F expect.log $MASTER_TMP_OUT $SLAVE_TMP_OUT

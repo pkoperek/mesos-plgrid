@@ -69,5 +69,51 @@ function uploadFile {
 	set -eu
 }
 
+function forwardSsh {
+	local IP="$3"
+	local USER="$1"
+	local PASS="$2"
+	local IP_RETVAL="$4"
+	local PORT_RETVAL="$5"
+
+	IPPORT_LINE=`expect -c "log_file expect.log
+        	spawn oneport -a $IP -p 22 
+	        expect \"Username:  \" 
+	        send $USER\n
+        	expect \"Password:  \"
+	        send $PASS\n
+        	interact
+	"`
+
+ 
+	IPPORT_OUT=`echo "$IPPORT_LINE"|grep ">"| awk -F"->" '{print $1}'`
+	IP_OUT=`echo "$IPPORT_OUT"|awk -F":" '{print $1}'|tr -d ' '`
+	IP_OUT=`echo "$IP_OUT"|awk '{print $1}'`
+	PORT_OUT=`echo "$IPPORT_OUT"|awk -F":" '{print $2}'|tr -d ' '`
+
+	eval "$IP_RETVAL=$IP_OUT"
+	eval "$PORT_RETVAL=$PORT_OUT"
+}
+
+function setupVM {
+	local USER="$1"
+	local PASS="$2"
+	local BASE_IP="$3"
+	local FILE="$4"
+
+	echo -n "Forwarding ssh..."
+	forwardSsh "$USER" "$PASS" "$SETUP_IP" "SETUP_IP_OUT" "SETUP_PORT_OUT"
+	echo "Doe."
+ 
+	echo "Access forwarded to: $SETUP_IP_OUT $SETUP_PORT_OUT (\"ssh -p "$SETUP_PORT_OUT" root@"$SETUP_IP_OUT"\")"
+	echo "Copying script ($FILE)..."
+	uploadFile "${SETUP_IP_OUT}" "${SETUP_PORT_OUT}" "${FILE}"
+	echo "Done."
+ 
+	echo -n "Executing script ($FILE)..."
+	ssh -oStrictHostKeyChecking=no -p "$SETUP_PORT_OUT" root@"${SETUP_IP_OUT}" "chmod +x ${FILE} && ./${FILE}" >& execution.log
+	echo "Done."
+}
+
 # test
 # waitUntilRunning 1338
