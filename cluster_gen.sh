@@ -85,7 +85,7 @@ echo "onetemplate delete ${SLAVE_TEMPLATE_ID}" >> ${CLEAN_UP}
 echo "Done."
 
 echo -n "Starting master..."
-MASTER_VM_ID=`onetemplate instantiate ${BASE_TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+MASTER_VM_ID=`onetemplate instantiate ${MASTER_TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
 echo "onevm shutdown $MASTER_VM_ID" >> ${CLEAN_UP}
 waitUntilState $MASTER_VM_ID "ACTIVE"
 MASTER_IP=`onevm show ${MASTER_VM_ID} |grep IP|awk -F'"' '{print $2}'`
