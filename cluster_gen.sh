@@ -95,5 +95,17 @@ echo "Setting up master VM..."
 setupVM "$USER" "$PASS" "$MASTER_IP" "master_setup.sh"
 echo "Done."
 
+for I in `seq $SLAVES_COUNT`; do 
+	echo "Starting slave: $I"
+	SLAVE_VM_ID=`onetemplate instantiate ${SLAVE_TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+	echo "onevm shutdown $SLAVE_VM_ID" >> ${CLEAN_UP}
+	waitUntilState $SLAVE_VM_ID "ACTIVE"
+	SLAVE_IP=`onevm show ${SLAVE_VM_ID} |grep IP|awk -F'"' '{print $2}'`
+	echo "Done. Slave $I VM ID: ${SLAVE_VM_ID} / IP: ${SLAVE_IP}"
+	echo "Setting up slave VM $I ..."
+	setupVM "$USER" "$PASS" "$SLAVE_IP" "slave_setup.sh"
+	echo "Done."
+done;
+
 echo "Cleaning up ($OUTTMP_F)"
 rm -f $OUTTMP_F expect.log $MASTER_TMP_OUT $SLAVE_TMP_OUT
