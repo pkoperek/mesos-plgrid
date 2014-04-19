@@ -50,7 +50,7 @@ echo "onevm shutdown $VM_ID" >> ${CLEAN_UP}
 echo "onevm delete $VM_ID" >> ${CLEAN_UP}
 	
 MASTER_IP=`onevm show ${VM_ID} |grep IP|awk -F'"' '{print $2}'`
-waitUntilState $VM_ID "RUNNING"
+waitUntilState $VM_ID "ACTIVE"
 echo "Done. Internal IP: ${MASTER_IP}"
 
 echo -n "Forwarding ssh..."
