@@ -28,7 +28,7 @@ SSHKEY=`cat ~/.ssh/id_rsa.pub`
 TEMPLATE_NAME="$CLUSTER_NAME-master-$TS"
 
 echo -n "Generating base template ($TEMPLATE_NAME)..."
-generateTemplate $TEMPLATE_NAME $IMGID $NETID $HNAME $SSHKEY $OUTTMP_F
+generateTemplate "$TEMPLATE_NAME" "$IMGID" "$NETID" "$HNAME" "$SSHKEY" "$OUTTMP_F"
 echo Done.
 
 CLEAN_UP=$CLUSTER_NAME-master_cleanup.sh

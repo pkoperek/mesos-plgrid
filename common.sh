@@ -21,12 +21,12 @@ function waitUntilState {
 }
 
 function generateTemplate {
-local TEMPLATE_NAME=$1
-local IMGID=$2
-local NETID=$3
-local HNAME=$4
-local SSHKEY=$5
-local OUTPUT_FILE=$6
+local TEMPLATE_NAME="$1"
+local IMGID="$2"
+local NETID="$3"
+local HNAME="$4"
+local SSHKEY="$5"
+local OUTPUT_FILE="$6"
 
 (
 cat <<_EOF_
