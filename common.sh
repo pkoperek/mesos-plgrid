@@ -103,7 +103,7 @@ function setupVM {
 
 	echo -n "Forwarding ssh..."
 	forwardSsh "$USER" "$PASS" "$SETUP_IP" "SETUP_IP_OUT" "SETUP_PORT_OUT"
-	echo "Doe."
+	echo "Done."
  
 	echo "Access forwarded to: $SETUP_IP_OUT $SETUP_PORT_OUT (\"ssh -p "$SETUP_PORT_OUT" root@"$SETUP_IP_OUT"\")"
 	echo "Copying script ($FILE)..."
