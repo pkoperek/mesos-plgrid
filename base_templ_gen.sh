@@ -80,7 +80,9 @@ echo "Done."
 
 echo "Storing mesos-ready image..."
 echo -n "Generating image ID..."
-BASE_IMAGE_ID=`onevm saveas $BASE_VM_ID $CLUSTER_NAME-base-image|grep "Image ID"|awk -F":" '{print $2}'|tr -d ' '`
+#BASE_IMAGE_ID=`onevm saveas $BASE_VM_ID $CLUSTER_NAME-base-image|grep "Image ID"|awk -F":" '{print $2}'|tr -d ' '`
+BASE_IMAGE_ID=`onevm saveas $BASE_VM_ID $CLUSTER_NAME-base-image`
+echo "BASE: ${BASE_IMAGE_ID}"
 echo "oneimage delete $BASE_IMAGE_ID" >> $CLEAN_UP
 echo "Done. Base ID: $BASE_IMAGE_ID"
 
