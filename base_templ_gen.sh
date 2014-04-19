@@ -71,17 +71,7 @@ MASTER_PORT_OUT=`echo "$MASTER_IPPORT_OUT"|awk -F":" '{print $2}'|tr -d ' '`
 
 echo "Master access forwarded to: $MASTER_IP_OUT $MASTER_PORT_OUT (\"ssh -p "$MASTER_PORT_OUT" root@"$MASTER_IP_OUT"\")"
 echo "Copying installation script ..."
-
-set +eu
-SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -P ${MASTER_PORT_OUT} mesos_install.sh root@${MASTER_IP_OUT}:mesos_install.sh"
-	
-$SCP
-while [ "$?" != "0" ]; do
-	echo "Retrying ..." 
-	sleep 3
-	$SCP
-done
-set -eu
+uploadFile "${MASTER_IP_OUT}" "${MASTER_PORT_OUT}" "mesos_install.sh"
 echo "Done."
 
 echo -n "Executing installation script..."
@@ -98,6 +88,10 @@ echo -n "Storing the image..."
 onevm shutdown $VM_ID
 waitUntilState $VM_ID "DONE"
 echo "Done."
+
+echo -n "Starting master..."
+
+
 
 echo "Cleaning up ($OUTTMP_F)"
 rm -f $OUTTMP_F expect.log
