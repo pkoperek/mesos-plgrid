@@ -8,15 +8,48 @@ function getStatus {
 	eval "$2='${STATUS}'"
 }
 
-function waitUntilRunning {
+function waitUntilState {
 	local VM_ID=$1
 	local VM_STATUS=""
+	local VM_STATUS_TO_WAIT=$2
 	getStatus ${VM_ID} VM_STATUS
-	while [ "$VM_STATUS" != "ACTIVE" ]; do
+	while [ "$VM_STATUS" != "$VM_STATUS_TO_WAIT" ]; do
 		echo "Waiting for machine $VM_ID to start ($VM_STATUS)..."
 		sleep 5
 		getStatus ${VM_ID} VM_STATUS
 	done
+}
+
+function generateTemplate {
+local TEMPLATE_NAME=$1
+local IMGID=$2
+local NETID=$3
+local HNAME=$4
+local SSHKEY=$5
+local OUTPUT_FILE=$6
+
+(
+cat <<_EOF_
+NAME = "$TEMPLATE_NAME" 
+CPU    = 0.2
+MEMORY = 512
+
+DISK = [ IMAGE_ID  = $IMGID ]
+
+NIC    = [ NETWORK_ID = $NETID ]
+
+OS = [ arch = "x86_64" ]
+
+GRAPHICS = [
+  type    = "vnc"
+]
+
+CONTEXT = [
+  hostname = "$HNAME",
+  ssh_key = "$SSHKEY"
+]
+_EOF_
+) > $OUTPUT_FILE
 }
 
 # test

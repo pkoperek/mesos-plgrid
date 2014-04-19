@@ -13,10 +13,7 @@ if [ -z "$PASS" ]; then
   exit
 fi
 
-DRY_RUN="$1"
 set -u
-
-echo "DRY_RUN = ${DRY_RUN}" 
 
 TS=`date +%s`
 OUTTMP_F="/tmp/onetmptempl.$USER.$TS"
@@ -32,31 +29,8 @@ fi
 SSHKEY=`cat ~/.ssh/id_rsa.pub`
 TEMPLATE_NAME="$CLUSTER_NAME-master-$TS"
 
-echo -n "Generating master template ($TEMPLATE_NAME)..."
-
-(
-cat <<_EOF_
-NAME = "$TEMPLATE_NAME" 
-CPU    = 0.2
-MEMORY = 512
-
-DISK = [ IMAGE_ID  = $IMGID ]
-
-NIC    = [ NETWORK_ID = $NETID ]
-
-OS = [ arch = "x86_64" ]
-
-GRAPHICS = [
-  type    = "vnc"
-]
-
-CONTEXT = [
-  user_data = "MASTER",
-  hostname = "$HNAME",
-  ssh_key = "$SSHKEY"
-]
-_EOF_
-) > $OUTTMP_F
+echo -n "Generating base template ($TEMPLATE_NAME)..."
+generateTemplate $TEMPLATE_NAME $IMGID $NETID $HNAME $SSHKEY $OUTTMP_F
 
 echo Done.
 
@@ -67,62 +41,66 @@ touch ${CLEAN_UP}
 chmod +x ${CLEAN_UP}
 echo "#!/bin/bash" >> ${CLEAN_UP}
 
-if [ -n "${DRY_RUN}" ]; then
-	echo "Template contents:"
-	cat $OUTTMP_F
-else 
-	echo 'Uploading template'
+echo 'Uploading template'
 
-	TEMPLATE_ID=`onetemplate create $OUTTMP_F | grep ID | awk -F':' '{print $2}'|tr -d ' '`
-	echo "onetemplate delete ${TEMPLATE_ID}" >> ${CLEAN_UP}
+TEMPLATE_ID=`onetemplate create $OUTTMP_F | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+echo "onetemplate delete ${TEMPLATE_ID}" >> ${CLEAN_UP}
 
-	echo "Uploaded ${TEMPLATE_ID}"
+echo "Uploaded ${TEMPLATE_ID}"
 
-	VM_ID=`onetemplate instantiate ${TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
-	echo "onevm shutdown $VM_ID" >> ${CLEAN_UP}
-	echo "onevm delete $VM_ID" >> ${CLEAN_UP}
+VM_ID=`onetemplate instantiate ${TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
+echo "onevm shutdown $VM_ID" >> ${CLEAN_UP}
+echo "onevm delete $VM_ID" >> ${CLEAN_UP}
 	
-	MASTER_IP=`onevm show ${VM_ID} |grep IP|awk -F'"' '{print $2}'`
-	echo "Master node started with IP: ${MASTER_IP}"
+MASTER_IP=`onevm show ${VM_ID} |grep IP|awk -F'"' '{print $2}'`
+echo "Master node started with IP: ${MASTER_IP}"
 
-	waitUntilRunning $VM_ID
+waitUntilState $VM_ID "RUNNING"
 
-	echo "Forwarding ssh..."
+echo "Forwarding ssh..."
 
-	IPPORT_LINE=`expect -c "log_file expect.log
-		spawn oneport -a $MASTER_IP -p 22 
-		expect \"Username:  \" 
-		send $USER\n
-		expect \"Password:  \"
-		send $PASS\n
-		interact
-	"`
+IPPORT_LINE=`expect -c "log_file expect.log
+	spawn oneport -a $MASTER_IP -p 22 
+	expect \"Username:  \" 
+	send $USER\n
+	expect \"Password:  \"
+	send $PASS\n
+	interact
+"`
 
-	echo "Port forwarding done ..."
+echo "Port forwarding done ..."
 
-	MASTER_IPPORT_OUT=`echo "$IPPORT_LINE"|grep ">"| awk -F"->" '{print $1}'`
-	MASTER_IP_OUT=`echo "$MASTER_IPPORT_OUT"|awk -F":" '{print $1}'|tr -d ' '`
-	MASTER_IP_OUT=`echo "$MASTER_IP_OUT"|awk '{print $1}'`
-	MASTER_PORT_OUT=`echo "$MASTER_IPPORT_OUT"|awk -F":" '{print $2}'|tr -d ' '`
+MASTER_IPPORT_OUT=`echo "$IPPORT_LINE"|grep ">"| awk -F"->" '{print $1}'`
+MASTER_IP_OUT=`echo "$MASTER_IPPORT_OUT"|awk -F":" '{print $1}'|tr -d ' '`
+MASTER_IP_OUT=`echo "$MASTER_IP_OUT"|awk '{print $1}'`
+MASTER_PORT_OUT=`echo "$MASTER_IPPORT_OUT"|awk -F":" '{print $2}'|tr -d ' '`
 
-	echo "Master access forwarded to: $MASTER_IP_OUT $MASTER_PORT_OUT (\"ssh -p "$MASTER_PORT_OUT" root@"$MASTER_IP_OUT"\")"
-	echo "Copying installation script ..."
+echo "Master access forwarded to: $MASTER_IP_OUT $MASTER_PORT_OUT (\"ssh -p "$MASTER_PORT_OUT" root@"$MASTER_IP_OUT"\")"
+echo "Copying installation script ..."
 
-	set +eux
-	SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -P ${MASTER_PORT_OUT} mesos_install.sh root@${MASTER_IP_OUT}:mesos_install.sh"
+set +eu
+SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -P ${MASTER_PORT_OUT} mesos_install.sh root@${MASTER_IP_OUT}:mesos_install.sh"
 	
+$SCP
+while [ "$?" != "0" ]; do
+	echo "Retrying ..." 
+	sleep 3
 	$SCP
-	while [ "$?" != "0" ]; do
-		echo "Retrying ..." 
-		sleep 3
-		$SCP
-	done
+done
+set -eu
 
-	echo "Executing installation script..."
+echo "Executing installation script..."
 
-	ssh -oStrictHostKeyChecking=no -p "$MASTER_PORT_OUT" root@"${MASTER_IP_OUT}" 'chmod +x mesos_install.sh && ./mesos_install.sh' >& mesos_installation.log
+ssh -oStrictHostKeyChecking=no -p "$MASTER_PORT_OUT" root@"${MASTER_IP_OUT}" 'chmod +x mesos_install.sh && ./mesos_install.sh' >& mesos_installation.log
 
-fi
+echo "Storing mesos-ready image..."
+
+BASE_IMAGE_ID=`onevm saveas $VM_ID $CLUSTER_NAME-base-image|grep "Image ID"|awk -F":" '{print $2}'|tr -d ' '`
+	
+onevm shutdown $VM_ID
+
+waitUntilState $VM_ID "DONE"
+
 
 echo "Cleaning up ($OUTTMP_F)"
 rm -f $OUTTMP_F expect.log
