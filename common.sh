@@ -98,7 +98,7 @@ function forwardSsh {
 function setupVM {
 	local USER="$1"
 	local PASS="$2"
-	local BASE_IP="$3"
+	local SETUP_IP="$3"
 	local FILE="$4"
 
 	echo -n "Forwarding ssh..."
