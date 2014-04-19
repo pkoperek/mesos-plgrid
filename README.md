@@ -11,15 +11,14 @@ voms-proxy-init
   * Clone this repo
 
 ```
-git clone ...
+git clone git@github.com:pkoperek/mesos-plgrid.git
+```
+PASS="YourPassword"
+CLUSTER_NAME=alpha-by-default
+IMGID=8 # change if you want different distro than ubuntu 12.04
+NETID=0
 ```
 
   * Specify configuration options in settings.sh
-  * Run 
+  * Run `./cluster_gen.sh`
 
-
-Todo:
-=====
-
-  * Create slave scripts
-  * Rename current scripts as 'base' scripts (they create the base template -> which later can be used on both master and slave nodes)
