@@ -13,18 +13,6 @@ if [ -z "$PASS" ]; then
   exit
 fi
 
-if [ -z "$IMGID" ]; then
-  IMGID="8"
-fi
-
-if [ -z "$NETID" ]; then
-  NETID="0"
-fi
-
-if [ -z "$CLUSTER_NAME" ]; then
-  CLUSTER_NAME="alpha"
-fi
-
 DRY_RUN="$1"
 set -u
 
