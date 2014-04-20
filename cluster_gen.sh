@@ -103,7 +103,14 @@ for I in `seq $SLAVES_COUNT`; do
 	SLAVE_IP=`onevm show ${SLAVE_VM_ID} |grep IP|awk -F'"' '{print $2}'`
 	echo "Done. Slave $I VM ID: ${SLAVE_VM_ID} / IP: ${SLAVE_IP}"
 	echo "Setting up slave VM $I ..."
-	setupVM "$USER" "$PASS" "$SLAVE_IP" "slave_setup.sh"
+
+	TMP_SETUP_FILE="tmp_slave_setup.sh"
+	rm -f $TMP_SETUP_FILE
+	echo "#!/bin/bash" >> "$TMP_SETUP_FILE" 
+	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
+	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
+
+	setupVM "$USER" "$PASS" "$SLAVE_IP" "$TMP_SETUP_FILE"
 	echo "Done."
 done;
 
