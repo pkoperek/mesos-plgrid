@@ -100,12 +100,15 @@ function setupVM {
 	local PASS="$2"
 	local SETUP_IP="$3"
 	local FILE="$4"
+	local CLUSTER_ACCESS="$5"
 
 	echo -n "Forwarding ssh..."
 	forwardSsh "$USER" "$PASS" "$SETUP_IP" "SETUP_IP_OUT" "SETUP_PORT_OUT"
 	echo "Done."
  
 	echo "Access forwarded to: $SETUP_IP_OUT $SETUP_PORT_OUT (\"ssh -p "$SETUP_PORT_OUT" root@"$SETUP_IP_OUT"\")"
+	echo "ssh -p "$SETUP_PORT_OUT" root@"$SETUP_IP_OUT" >> "${CLUSTER_ACCESS}"
+
 	echo "Copying script ($FILE)..."
 	uploadFile "${SETUP_IP_OUT}" "${SETUP_PORT_OUT}" "${FILE}"
 	echo "Done."

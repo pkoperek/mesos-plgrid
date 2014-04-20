@@ -30,6 +30,7 @@ SSHKEY=`cat ~/.ssh/id_rsa.pub`
 TEMPLATE_NAME="$CLUSTER_NAME-base-$TS"
 MASTER_TEMPLATE_NAME="$CLUSTER_NAME-master-$TS"
 SLAVE_TEMPLATE_NAME="$CLUSTER_NAME-slave-$TS"
+CLUSTER_ACCESS="$CLUSTER_NAME-access.txt"
 
 echo -n "Generating base template ($TEMPLATE_NAME)..."
 generateTemplate "$TEMPLATE_NAME" "$IMGID" "$NETID" "$HNAME" "$SSHKEY" "$OUTTMP_F"
@@ -58,7 +59,7 @@ waitUntilState $BASE_VM_ID "ACTIVE"
 echo "Done. Internal IP: ${BASE_IP}"
 
 echo "Setting up base VM..."
-setupVM "$USER" "$PASS" "$BASE_IP" "mesos_install.sh" 
+setupVM "$USER" "$PASS" "$BASE_IP" "mesos_install.sh" ""
 echo "Done."
 
 echo "Storing mesos-ready image..."
@@ -92,7 +93,8 @@ MASTER_IP=`onevm show ${MASTER_VM_ID} |grep IP|awk -F'"' '{print $2}'`
 echo "Done. Master VM ID: ${MASTER_VM_ID} / IP: ${MASTER_IP}"
 
 echo "Setting up master VM..."
-setupVM "$USER" "$PASS" "$MASTER_IP" "master_setup.sh"
+echo -n "master: " >> "$CLUSTER_ACCESS"
+setupVM "$USER" "$PASS" "$MASTER_IP" "master_setup.sh" "$CLUSTER_ACCESS"
 echo "Done."
 
 for I in `seq $SLAVES_COUNT`; do 
@@ -110,7 +112,8 @@ for I in `seq $SLAVES_COUNT`; do
 	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
-	setupVM "$USER" "$PASS" "$SLAVE_IP" "$TMP_SETUP_FILE"
+	echo -n "slave $I: " >> "$CLUSTER_ACCESS"
+	setupVM "$USER" "$PASS" "$SLAVE_IP" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
 	echo "Done."
 done;
 
