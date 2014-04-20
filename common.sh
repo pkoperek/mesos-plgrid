@@ -107,7 +107,7 @@ function setupVM {
 	echo "Done."
  
 	echo "Access forwarded to: $SETUP_IP_OUT $SETUP_PORT_OUT (\"ssh -p "$SETUP_PORT_OUT" root@"$SETUP_IP_OUT"\")"
-	echo "ssh -p "$SETUP_PORT_OUT" root@"$SETUP_IP_OUT" >> "${CLUSTER_ACCESS}"
+	echo "ssh -p $SETUP_PORT_OUT root@$SETUP_IP_OUT" >> "${CLUSTER_ACCESS}"
 
 	echo "Copying script ($FILE)..."
 	uploadFile "${SETUP_IP_OUT}" "${SETUP_PORT_OUT}" "${FILE}"
