@@ -69,15 +69,16 @@ function uploadFile {
 	set -eu
 }
 
-function forwardSsh {
+function forwardPort {
 	local IP="$3"
 	local USER="$1"
 	local PASS="$2"
-	local IP_RETVAL="$4"
-	local PORT_RETVAL="$5"
+	local IP_RETVAL="$5"
+	local PORT_RETVAL="$6"
+	local PORT_TO_FORWARD="$4"
 
 	IPPORT_LINE=`expect -c "log_file expect.log
-        	spawn oneport -a $IP -p 22 
+        	spawn oneport -a $IP -p $PORT_TO_FORWARD 
 	        expect \"Username:  \" 
 	        send $USER\n
         	expect \"Password:  \"
@@ -93,6 +94,10 @@ function forwardSsh {
 
 	eval "$IP_RETVAL=$IP_OUT"
 	eval "$PORT_RETVAL=$PORT_OUT"
+}
+
+function forwardSsh {
+	forwardPort "$1" "$2" "$3" "22" "$4" "$5"
 }
 
 function setupVM {

@@ -95,6 +95,8 @@ echo "Done. Master VM ID: ${MASTER_VM_ID} / IP: ${MASTER_IP}"
 echo "Setting up master VM..."
 echo -n "master (${MASTER_IP}): " >> "$CLUSTER_ACCESS"
 setupVM "$USER" "$PASS" "$MASTER_IP" "master_setup.sh" "$CLUSTER_ACCESS"
+forwardPort "$USER" "$PASS" "$MASTER_IP" "5050" "MASTER_GUI_IP" "MASTER_GUI_PORT"
+echo "master gui: ${MASTER_GUI_IP}:${MASTER_GUI_PORT}" >> "$CLUSTER_ACCESS"
 echo "Done."
 
 for I in `seq $SLAVES_COUNT`; do 
