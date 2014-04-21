@@ -23,3 +23,7 @@ SLAVES_COUNT=2
   * Specify configuration options in settings.sh
   * Run `./cluster_gen.sh`
 
+Todo:
+=====
+
+  * use `CLUSTER` /etc/default/mesos-* setting as cluster name
