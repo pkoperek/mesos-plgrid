@@ -23,3 +23,7 @@ SLAVES_COUNT=2
   * Specify configuration options in settings.sh
   * Run `./cluster_gen.sh`
 
+Todo:
+=====
+
+  * automatically install spark (??? is this required - can't spark be deployed when application is alunched? http://spark.apache.org/docs/0.9.1/cluster-overview.html)
