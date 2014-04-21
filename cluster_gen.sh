@@ -93,7 +93,7 @@ MASTER_IP=`onevm show ${MASTER_VM_ID} |grep IP|awk -F'"' '{print $2}'`
 echo "Done. Master VM ID: ${MASTER_VM_ID} / IP: ${MASTER_IP}"
 
 echo "Setting up master VM..."
-echo -n "master: " >> "$CLUSTER_ACCESS"
+echo -n "master (${MASTER_IP}): " >> "$CLUSTER_ACCESS"
 setupVM "$USER" "$PASS" "$MASTER_IP" "master_setup.sh" "$CLUSTER_ACCESS"
 echo "Done."
 
@@ -112,7 +112,7 @@ for I in `seq $SLAVES_COUNT`; do
 	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
-	echo -n "slave $I: " >> "$CLUSTER_ACCESS"
+	echo -n "slave $I (${SLAVE_IP}): " >> "$CLUSTER_ACCESS"
 	setupVM "$USER" "$PASS" "$SLAVE_IP" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
 	echo "Done."
 done;
