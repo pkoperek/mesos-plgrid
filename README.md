@@ -13,6 +13,10 @@ voms-proxy-init
 ```
 git clone git@github.com:pkoperek/mesos-plgrid.git
 ```
+
+  * Specify configuration options in settings.sh
+
+```
 PASS="YourPassword"
 CLUSTER_NAME=alpha-by-default
 IMGID=8 # change if you want different distro than ubuntu 12.04
@@ -20,7 +24,6 @@ NETID=0
 SLAVES_COUNT=2
 ```
 
-  * Specify configuration options in settings.sh
   * Run `./cluster_gen.sh`
 
 Todo:
