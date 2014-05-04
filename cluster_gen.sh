@@ -120,5 +120,7 @@ for I in `seq $SLAVES_COUNT`; do
 	echo "Done."
 done;
 
+echo "rm -f $CLUSTER_ACCESS" >> ${CLEAN_UP}
+
 echo "Cleaning up ($OUTTMP_F)"
 rm -f $OUTTMP_F expect.log $MASTER_TMP_OUT $SLAVE_TMP_OUT
