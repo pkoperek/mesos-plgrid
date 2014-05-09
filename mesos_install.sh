@@ -8,7 +8,7 @@ MESOS_VERSION="mesos_0.18.0_amd64"
 apt-get update
 apt-get upgrade -y
 
-apt-get install zookeeperd default-jre python-setuptools python-protobuf curl htop -y
+apt-get install zookeeperd openjdk-7-jdk python-setuptools python-protobuf curl htop -y
 
 curl -sSfL http://downloads.mesosphere.io/master/ubuntu/${UBUNTU_VERSION}/${MESOS_VERSION}.deb --output /tmp/mesos.deb
 dpkg -i /tmp/mesos.deb
