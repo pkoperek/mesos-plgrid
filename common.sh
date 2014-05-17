@@ -32,7 +32,7 @@ local OUTPUT_FILE="$6"
 cat <<_EOF_
 NAME = "$TEMPLATE_NAME" 
 CPU    = 0.2
-MEMORY = 512
+MEMORY = 2048
 
 DISK = [ IMAGE_ID  = $IMGID ]
 
