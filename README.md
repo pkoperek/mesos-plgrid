@@ -26,9 +26,19 @@ SLAVES_COUNT=2
 
   * Run `./cluster_gen.sh`
 
+Sample `spark-env.sh`
+=====================
+
+```
+export MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so
+export SPARK_EXECUTOR_URI=/tmp/spark-0.9.1-hadoop_2.0.0-mr1-cdh4.4.0-bin.tar.gz
+export MASTER=zk://localhost:2181/mesos
+```
+
 Todo:
 =====
 
   * use `CLUSTER` /etc/default/mesos-* setting as cluster name
   * automatically install spark (??? is this required - can't spark be deployed when application is lunched? [spark link](http://spark.apache.org/docs/0.9.1/cluster-overview.html)
   * set hostname in /etc/hosts with `sed s/plgubuntu/hostname/g`
+  * automatically upload spark distribution to the nodes
