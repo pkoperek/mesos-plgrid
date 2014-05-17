@@ -30,4 +30,5 @@ Todo:
 =====
 
   * use `CLUSTER` /etc/default/mesos-* setting as cluster name
-  * automatically install spark (??? is this required - can't spark be deployed when application is alunched? http://spark.apache.org/docs/0.9.1/cluster-overview.html)
+  * automatically install spark (??? is this required - can't spark be deployed when application is lunched? [spark link](http://spark.apache.org/docs/0.9.1/cluster-overview.html)
+  * set hostname in /etc/hosts with `sed s/plgubuntu/hostname/g`
