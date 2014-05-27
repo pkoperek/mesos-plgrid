@@ -6,9 +6,14 @@ MY_IP=`ifconfig eth0|grep "inet addr"|awk -F":" '{print $2}'| awk '{print $1}'`
 echo "IP=$MY_IP" >> /etc/default/mesos-slave
 
 # hostname
-echo "slave$SLAVE_NO" > /etc/hostname
+HOSTNAME="slave$SLAVE_NO"
+echo "${HOSTNAME}" > /etc/hostname
 
 # master ip
 echo "zk://${MASTER_IP}:2181/mesos" > /etc/mesos/zk
+
+sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts > /etc/hosts.new
+cp /etc/hosts /etc/hosts.old
+mv /etc/hosts.new /etc/hosts
 
 reboot
