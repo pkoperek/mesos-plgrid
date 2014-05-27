@@ -9,4 +9,8 @@ echo "IP=$MY_IP" >> /etc/default/mesos-master
 # hostname
 echo "master" > /etc/hostname
 
+sed s/plgubuntu/master/g /etc/hosts > /etc/hosts.new
+cp /etc/hosts /etc/hosts.old
+mv /etc/hosts.new /etc/hosts
+
 reboot
