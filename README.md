@@ -26,6 +26,10 @@ SLAVES_COUNT=2
 
   * Run `./cluster_gen.sh`
 
+  * Run `$ ./spark_upload.sh alpha-access.txt ../spark-0.9.1-hadoop_2.0.0-mr1-cdh4.4.0-bin.tar.gz /tmp`
+
+  * Copy output and execute scp commands 
+
 Sample `spark-env.sh`
 =====================
 
@@ -39,5 +43,3 @@ Todo:
 =====
 
   * use `CLUSTER` /etc/default/mesos-* setting as cluster name
-  * automatically install spark (??? is this required - can't spark be deployed when application is lunched? [spark link](http://spark.apache.org/docs/0.9.1/cluster-overview.html)
-  * automatically upload spark distribution to the nodes
