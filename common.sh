@@ -106,6 +106,10 @@ function setupVM {
 		echo "ssh -p $SETUP_PORT_OUT root@$SETUP_IP_OUT" >> "${CLUSTER_ACCESS}"
 	fi
 
+    if [ -n "$CLEAN_UP" ]; then
+        echo "oneport -D -a $SETUP_IP" >> "${CLEAN_UP}" 
+    fi
+
 	echo "Copying script ($FILE)..."
 	uploadFile "${SETUP_IP_OUT}" "${SETUP_PORT_OUT}" "${FILE}"
 	echo "Done."
