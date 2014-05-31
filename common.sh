@@ -82,6 +82,10 @@ function forwardPort {
 	PORT_OUT=`echo "$IPPORT_LINES"|grep "Public port:"| awk -F":" '{print $2}'| tr -d ' '`
 	IP_OUT=`echo "$IPPORT_LINES"|grep "Public IP:"|awk -F":" '{print $2}'| tr -d ' '`
 
+    if [ -n "$CLEAN_UP" ]; then
+        echo "oneport -D -a $IP -p $PORT_OUT" >> "${CLEAN_UP}" 
+    fi
+
 	eval "$IP_RETVAL=$IP_OUT"
 	eval "$PORT_RETVAL=$PORT_OUT"
 }
@@ -105,10 +109,6 @@ function setupVM {
 	if [ -n "$CLUSTER_ACCESS" ]; then
 		echo "ssh -p $SETUP_PORT_OUT root@$SETUP_IP_OUT" >> "${CLUSTER_ACCESS}"
 	fi
-
-    if [ -n "$CLEAN_UP" ]; then
-        echo "oneport -D -a $SETUP_IP -p $SETUP_PORT_OUT" >> "${CLEAN_UP}" 
-    fi
 
 	echo "Copying script ($FILE)..."
 	uploadFile "${SETUP_IP_OUT}" "${SETUP_PORT_OUT}" "${FILE}"
