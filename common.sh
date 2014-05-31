@@ -107,7 +107,7 @@ function setupVM {
 	fi
 
     if [ -n "$CLEAN_UP" ]; then
-        echo "oneport -D -a $SETUP_IP" >> "${CLEAN_UP}" 
+        echo "oneport -D -a $SETUP_IP -p $SETUP_PORT_OUT" >> "${CLEAN_UP}" 
     fi
 
 	echo "Copying script ($FILE)..."
