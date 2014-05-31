@@ -77,20 +77,10 @@ function forwardPort {
 	local PORT_RETVAL="$6"
 	local PORT_TO_FORWARD="$4"
 
-	IPPORT_LINE=`expect -c "log_file expect.log
-        	spawn oneport -a $IP -p $PORT_TO_FORWARD 
-	        expect \"Username:  \" 
-	        send $USER\n
-        	expect \"Password:  \"
-	        send $PASS\n
-        	interact
-	"`
-
+	IPPORT_LINES=`oneport -a $IP -p $PORT_TO_FORWARD -A`
  
-	IPPORT_OUT=`echo "$IPPORT_LINE"|grep ">"| awk -F"->" '{print $1}'`
-	IP_OUT=`echo "$IPPORT_OUT"|awk -F":" '{print $1}'|tr -d ' '`
-	IP_OUT=`echo "$IP_OUT"|awk '{print $1}'`
-	PORT_OUT=`echo "$IPPORT_OUT"|awk -F":" '{print $2}'|tr -d ' '`
+	PORT_OUT=`echo "$IPPORT_LINES"|grep "Public port:"| awk -F":" '{print $2}'| tr -d ' '`
+	IP_OUT=`echo "$IPPORT_LINES"|grep "Public IP:"|awk -F":" '{print $2}'| tr -d ' '`
 
 	eval "$IP_RETVAL=$IP_OUT"
 	eval "$PORT_RETVAL=$PORT_OUT"
