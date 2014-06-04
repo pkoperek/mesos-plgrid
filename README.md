@@ -43,3 +43,10 @@ Todo:
 =====
 
   * use `CLUSTER` /etc/default/mesos-* setting as cluster name
+  * to make spark @ mesos running:
+    * use spark version 1.0.0
+    * mesos 0.18.2
+    * need only MESOS_NATIVE_LIBRARY and SPARK_EXECUTOR_URI
+    * ./bin/spark-shell --master mesos://zk://master:2181/mesos
+    * one liner to check if REPL works: scala> sc.parallelize(1 to 10000).filter(_<10).collect()
+
