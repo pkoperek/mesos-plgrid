@@ -3,7 +3,7 @@
 # Needs root access!!!
 
 UBUNTU_VERSION="12.04"
-MESOS_VERSION="mesos_0.18.0_amd64"
+MESOS_VERSION="mesos_0.18.2_amd64"
 
 apt-get update
 apt-get upgrade -y
