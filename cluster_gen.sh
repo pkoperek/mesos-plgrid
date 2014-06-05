@@ -59,7 +59,7 @@ waitUntilState $BASE_VM_ID "ACTIVE"
 echo "Done. Internal IP: ${BASE_IP}"
 
 echo "Setting up base VM..."
-setupVM "$USER" "$PASS" "$BASE_IP" "mesos_install.sh" ""
+setupVM "$USER" "$PASS" "$BASE_IP" "base_install.sh" ""
 echo "Done."
 
 echo "Storing mesos-ready image..."
