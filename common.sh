@@ -70,12 +70,10 @@ function uploadFile {
 }
 
 function forwardPort {
-	local IP="$3"
-	local USER="$1"
-	local PASS="$2"
-	local IP_RETVAL="$5"
-	local PORT_RETVAL="$6"
-	local PORT_TO_FORWARD="$4"
+	local IP="$1"
+	local IP_RETVAL="$3"
+	local PORT_RETVAL="$4"
+	local PORT_TO_FORWARD="$2"
 
 	IPPORT_LINES=`oneport -a $IP -p $PORT_TO_FORWARD -A`
  
@@ -91,18 +89,16 @@ function forwardPort {
 }
 
 function forwardSsh {
-	forwardPort "$1" "$2" "$3" "22" "$4" "$5"
+	forwardPort "$1" "22" "$2" "$3"
 }
 
 function setupVM {
-	local USER="$1"
-	local PASS="$2"
 	local SETUP_IP="$3"
 	local FILE="$4"
 	local CLUSTER_ACCESS="$5"
 
 	echo -n "Forwarding ssh..."
-	forwardSsh "$USER" "$PASS" "$SETUP_IP" "SETUP_IP_OUT" "SETUP_PORT_OUT"
+	forwardSsh "$SETUP_IP" "SETUP_IP_OUT" "SETUP_PORT_OUT"
 	echo "Done."
  
 	echo "Access forwarded to: $SETUP_IP_OUT $SETUP_PORT_OUT (\"ssh -p "$SETUP_PORT_OUT" root@"$SETUP_IP_OUT"\")"

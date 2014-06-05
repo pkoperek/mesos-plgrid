@@ -7,14 +7,6 @@ set -eu
 source settings.sh
 source common.sh
 
-set +u
-if [ -z "$PASS" ]; then
-  echo "Need to specify password in credentials.sh!"
-  exit
-fi
-
-set -u
-
 if [ ! -f ~/.ssh/id_rsa.pub ]
 then
   echo "Error - could not find generated key"
@@ -61,7 +53,7 @@ echo "Done. Internal IP: ${BASE_IP}"
 echo "Setting up base VM..."
 rm -f base_install.sh
 sed s/"_CLIENT_SSH_KEY_PLACEHOLDER_"/"${CLIENT_SSH_KEY}"/g base_install.sh.template > base_install.sh
-setupVM "$USER" "$PASS" "$BASE_IP" "base_install.sh" ""
+setupVM "$BASE_IP" "base_install.sh" ""
 echo "Done."
 
 echo "Storing mesos-ready image..."
@@ -96,8 +88,8 @@ echo "Done. Master VM ID: ${MASTER_VM_ID} / IP: ${MASTER_IP}"
 
 echo "Setting up master VM..."
 echo -n "master (${MASTER_IP}): " >> "$CLUSTER_ACCESS"
-setupVM "$USER" "$PASS" "$MASTER_IP" "master_setup.sh" "$CLUSTER_ACCESS"
-forwardPort "$USER" "$PASS" "$MASTER_IP" "5050" "MASTER_GUI_IP" "MASTER_GUI_PORT"
+setupVM "$MASTER_IP" "master_setup.sh" "$CLUSTER_ACCESS"
+forwardPort "$MASTER_IP" "5050" "MASTER_GUI_IP" "MASTER_GUI_PORT"
 echo "master gui: ${MASTER_GUI_IP}:${MASTER_GUI_PORT}" >> "$CLUSTER_ACCESS"
 echo "Done."
 
@@ -118,7 +110,7 @@ for I in `seq $SLAVES_COUNT`; do
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
 	echo -n "slave $I (${SLAVE_IP}): " >> "$CLUSTER_ACCESS"
-	setupVM "$USER" "$PASS" "$SLAVE_IP" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
+	setupVM "$SLAVE_IP" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
 	echo "Done."
 done;
 
