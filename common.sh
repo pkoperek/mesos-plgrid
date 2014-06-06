@@ -93,9 +93,9 @@ function forwardSsh {
 }
 
 function setupVM {
-	local SETUP_IP="$3"
-	local FILE="$4"
-	local CLUSTER_ACCESS="$5"
+	local SETUP_IP="$1"
+	local FILE="$2"
+	local CLUSTER_ACCESS="$3"
 
 	echo -n "Forwarding ssh..."
 	forwardSsh "$SETUP_IP" "SETUP_IP_OUT" "SETUP_PORT_OUT"
