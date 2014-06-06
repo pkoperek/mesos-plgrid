@@ -17,7 +17,7 @@ dpkg -i /tmp/mesos.deb
 curl -sSfL http://downloads.mesosphere.io/master/ubuntu/${UBUNTU_VERSION}/${MESOS_VERSION}.egg --output /tmp/mesos.egg
 easy_install /tmp/mesos.egg
 
-echo "${CLIENT_SSH_KEY}" >> /root/authorized_keys
+echo "${CLIENT_SSH_KEY}" >> /root/.ssh/authorized_keys
 
 chmod 700 /root/.ssh
 chmod 600 /root/.ssh/authorized_keys
