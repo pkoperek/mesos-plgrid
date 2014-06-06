@@ -52,7 +52,7 @@ echo "Done. Internal IP: ${BASE_IP}"
 
 echo "Setting up base VM..."
 rm -f base_install.sh
-sed s/"_CLIENT_SSH_KEY_PLACEHOLDER_"/"${CLIENT_SSH_KEY}"/g base_install.sh.template > base_install.sh
+sed -e "s/_CLIENT_SSH_KEY_PLACEHOLDER_/${CLIENT_SSH_KEY}/g" base_install.sh.template > base_install.sh
 setupVM "$BASE_IP" "base_install.sh" ""
 echo "Done."
 
