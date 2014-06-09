@@ -6,10 +6,16 @@ UBUNTU_VERSION="12.04"
 MESOS_VERSION="mesos_0.18.2_amd64"
 CLIENT_SSH_KEY="_CLIENT_SSH_KEY_PLACEHOLDER_"
 
+wget http://public-repo-1.hortonworks.com/HDP/ubuntu12/2.x/hdp.list -O /etc/apt/sources.list.d/hdp.list 
+
+gpg --keyserver pgp.mit.edu --recv-keys B9733A7A07513CAD
+gpg -a --export 07513CAD | apt-key add -
+
 apt-get update
 apt-get upgrade -y
 
-apt-get install zookeeperd openjdk-7-jdk default-jdk python-setuptools python-protobuf curl htop -y
+apt-get install openjdk-7-jdk default-jdk python-setuptools python-protobuf curl htop libsnappy1 libsnappy-dev hadoop hadoop-hdfs libhdfs0 libhdfs0-dev hadoop-yarn hadoop-mapreduce hadoop-client openssl
+ -y
 
 curl -sSfL http://downloads.mesosphere.io/master/ubuntu/${UBUNTU_VERSION}/${MESOS_VERSION}.deb --output /tmp/mesos.deb
 dpkg -i /tmp/mesos.deb
