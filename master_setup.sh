@@ -13,4 +13,8 @@ sed s/plgubuntu/master/g /etc/hosts > /etc/hosts.new
 cp /etc/hosts /etc/hosts.old
 mv /etc/hosts.new /etc/hosts
 
+# hdfs
+chown -R hdfs:hdfs /hdfs
+sudo -u hdfs /usr/lib/hadoop/bin/hadoop namenode -format
+
 reboot

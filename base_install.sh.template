@@ -28,3 +28,14 @@ chmod 700 /root/.ssh
 chmod 600 /root/.ssh/authorized_keys
 
 update-java-alternatives -s java-1.7.0-openjdk-amd64
+
+# hdfs
+mkdir /data
+chown hdfs:hdfs /data
+
+mkdir /var/log/hadoop
+chown root:hadoop /var/log/hadoop
+chmod 775 /var/log/hadoop
+
+mkdir /var/run/hadoop
+chown hdfs:hadoop /var/run/hadoop
