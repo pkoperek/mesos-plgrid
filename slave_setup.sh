@@ -10,9 +10,10 @@ HOSTNAME="slave$SLAVE_NO"
 echo "${HOSTNAME}" > /etc/hostname
 
 # /etc/hosts
-sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts > /etc/hosts.new
 cp /etc/hosts /etc/hosts.old
-mv /etc/hosts.new /etc/hosts
+sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts > /etc/hosts.new
+echo "${MY_IP}         ${HOSTNAME}" > /etc/hosts
+cat /etc/hosts.new >> /etc/hosts
 echo "${MASTER_IP}	master" >> /etc/hosts
 
 # zookeeper
