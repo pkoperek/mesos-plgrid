@@ -14,7 +14,7 @@ cp /etc/hosts /etc/hosts.old
 mv /etc/hosts.new /etc/hosts
 
 # zookeeper
-ln -s /usr/bin/zookeeper-server zookeeper-server
+ln -s /usr/bin/zookeeper-server /etc/init.d/zookeeper-server
 update-rc.d zookeeper-server defaults
 
 # hdfs

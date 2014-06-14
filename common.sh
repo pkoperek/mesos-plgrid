@@ -58,7 +58,7 @@ function uploadFile {
 	local PORT="$2"
 	local FILE="$3"
 
-	SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -r -P ${PORT} ${FILE} root@${IP}:${FILE}"
+	SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -r -P ${PORT} ${FILE} root@${IP}:"
          
 	$SCP
 	while [ "$?" != "0" ]; do
