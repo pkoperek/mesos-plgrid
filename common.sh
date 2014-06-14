@@ -20,6 +20,15 @@ function waitUntilState {
 	done
 }
 
+function addToHosts {
+    local MASTER_IP="$1"
+    local MASTER_PORT="$2"
+    local IP_TO_ADD="$3"
+    local HOSTNAME_TO_ADD="$4"
+
+    ssh -oStrictHostKeyChecking=no -p "${MASTER_PORT}" root@"${MASTER_IP}" "echo \"${IP_TO_ADD}       ${HOSTNAME_TO_ADD}\" >> /etc/hosts"
+}
+
 function generateTemplate {
 local TEMPLATE_NAME="$1"
 local IMGID="$2"
