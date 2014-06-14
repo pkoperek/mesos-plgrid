@@ -13,6 +13,10 @@ sed s/plgubuntu/master/g /etc/hosts > /etc/hosts.new
 cp /etc/hosts /etc/hosts.old
 mv /etc/hosts.new /etc/hosts
 
+# zookeeper
+ln -s /usr/bin/zookeeper-server zookeeper-server
+update-rc.d zookeeper-server defaults
+
 # hdfs
 chown -R hdfs:hdfs /hdfs
 sudo -u hdfs /usr/lib/hadoop/bin/hadoop namenode -format
