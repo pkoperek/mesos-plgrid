@@ -18,6 +18,7 @@ ln -s /usr/bin/zookeeper-server zookeeper-server
 update-rc.d zookeeper-server defaults
 
 # hdfs
+mkdir /hdfs
 chown -R hdfs:hdfs /hdfs
 sudo -u hdfs /usr/lib/hadoop/bin/hadoop namenode -format
 
