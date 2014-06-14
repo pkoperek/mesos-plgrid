@@ -111,7 +111,7 @@ for I in `seq $SLAVES_COUNT`; do
 	echo "SLAVE_NO=$I" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
-	addToHosts "${MASTER_OUT_IP}" "${MASTER_OUT_PORT}" "${SLAVE_IP}" "slave${SLAVE_NO}"
+	addToHosts "${MASTER_OUT_IP}" "${MASTER_OUT_PORT}" "${SLAVE_IP}" "slave${I}"
 
 	echo -n "slave $I (${SLAVE_IP}): " >> "$CLUSTER_ACCESS"
 	setupVM "$SLAVE_IP" "$TMP_SETUP_FILE" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
