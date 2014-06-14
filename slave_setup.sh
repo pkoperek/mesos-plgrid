@@ -18,7 +18,6 @@ mv /etc/hosts.new /etc/hosts
 
 # startup script overwrite
 echo "#!/bin/sh -e" > /etc/rc.local
-echo "sudo /usr/lib/hadoop/sbin/hadoop-daemon.sh start datanode" >> /etc/rc.local
-
+echo "sudo -u hdfs /usr/lib/hadoop/sbin/hadoop-daemon.sh start datanode" >> /etc/rc.local
 
 reboot
