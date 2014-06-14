@@ -29,13 +29,18 @@ chmod 600 /root/.ssh/authorized_keys
 
 update-java-alternatives -s java-1.7.0-openjdk-amd64
 
-# hdfs
+# hadoop core configuration
+cp hadoop-conf/* /etc/hadoop/conf
+
+# hdfs directory
 mkdir /data
 chown hdfs:hdfs /data
 
+# hadoop log dir
 mkdir /var/log/hadoop
 chown root:hadoop /var/log/hadoop
 chmod 775 /var/log/hadoop
 
+# hadoop pid dir
 mkdir /var/run/hadoop
 chown hdfs:hadoop /var/run/hadoop

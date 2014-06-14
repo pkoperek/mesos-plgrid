@@ -22,4 +22,8 @@ mkdir /hdfs
 chown -R hdfs:hdfs /hdfs
 sudo -u hdfs /usr/lib/hadoop/bin/hadoop namenode -format
 
+# startup script overwrite
+echo "#!/bin/sh -e" > /etc/rc.local
+echo "sudo /usr/lib/hadoop/sbin/hadoop-daemon.sh start namenode" >> /etc/rc.local
+
 reboot

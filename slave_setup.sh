@@ -16,4 +16,9 @@ sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts > /etc/hosts.new
 cp /etc/hosts /etc/hosts.old
 mv /etc/hosts.new /etc/hosts
 
+# startup script overwrite
+echo "#!/bin/sh -e" > /etc/rc.local
+echo "sudo /usr/lib/hadoop/sbin/hadoop-daemon.sh start datanode" >> /etc/rc.local
+
+
 reboot
