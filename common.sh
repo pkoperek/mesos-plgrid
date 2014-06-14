@@ -58,7 +58,7 @@ function uploadFile {
 	local PORT="$2"
 	local FILE="$3"
 
-	SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -P ${PORT} ${FILE} root@${IP}:${FILE}"
+	SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -r -P ${PORT} ${FILE} root@${IP}:${FILE}"
          
 	$SCP
 	while [ "$?" != "0" ]; do
@@ -94,8 +94,9 @@ function forwardSsh {
 
 function setupVM {
 	local SETUP_IP="$1"
-	local FILE="$2"
-	local CLUSTER_ACCESS="$3"
+	local UPLOAD_FILES="$2"
+    local SETUP_SCRIPT="$3"
+	local CLUSTER_ACCESS="$4"
 
 	echo -n "Forwarding ssh..."
 	forwardSsh "$SETUP_IP" "SETUP_IP_OUT" "SETUP_PORT_OUT"
@@ -106,12 +107,12 @@ function setupVM {
 		echo "ssh -p $SETUP_PORT_OUT root@$SETUP_IP_OUT" >> "${CLUSTER_ACCESS}"
 	fi
 
-	echo "Copying script ($FILE)..."
-	uploadFile "${SETUP_IP_OUT}" "${SETUP_PORT_OUT}" "${FILE}"
+	echo "Copying scripts ($UPLOAD_FILES)..."
+	uploadFile "${SETUP_IP_OUT}" "${SETUP_PORT_OUT}" "${UPLOAD_FILES}"
 	echo "Done."
  
-	echo -n "Executing script ($FILE)..."
-	ssh -oStrictHostKeyChecking=no -p "$SETUP_PORT_OUT" root@"${SETUP_IP_OUT}" "chmod +x ${FILE} && ./${FILE}" >& execution.log
+	echo -n "Executing script ($SETUP_SCRIPT)..."
+	ssh -oStrictHostKeyChecking=no -p "$SETUP_PORT_OUT" root@"${SETUP_IP_OUT}" "chmod +x ${SETUP_SCRIPT} && ./${SETUP_SCRIPT}" >& execution.log
 	echo "Done."
 }
 
