@@ -91,6 +91,7 @@ echo "Setting up master VM..."
 echo -n "master (${MASTER_IP}): " >> "$CLUSTER_ACCESS"
 setupVM "$MASTER_IP" "master_setup.sh" "master_setup.sh" "$CLUSTER_ACCESS"
 forwardPort "$MASTER_IP" "5050" "MASTER_GUI_IP" "MASTER_GUI_PORT"
+forwardPort "$MASTER_IP" "22" "MASTER_OUT_IP" "MASTER_OUT_PORT"
 echo "master gui: ${MASTER_GUI_IP}:${MASTER_GUI_PORT}" >> "$CLUSTER_ACCESS"
 echo "Done."
 
@@ -109,6 +110,8 @@ for I in `seq $SLAVES_COUNT`; do
 	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
 	echo "SLAVE_NO=$I" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
+
+	addToHosts "${MASTER_OUT_IP}" "${MASTER_OUT_PORT}" "${SLAVE_IP}" "slave${SLAVE_NO}"
 
 	echo -n "slave $I (${SLAVE_IP}): " >> "$CLUSTER_ACCESS"
 	setupVM "$SLAVE_IP" "$TMP_SETUP_FILE" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
