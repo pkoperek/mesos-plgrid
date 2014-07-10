@@ -51,4 +51,4 @@ Todo:
 =====
 
   * use `CLUSTER` /etc/default/mesos-* setting as cluster name
-
+  * fail with meaningful message when image isn't stored correctly
