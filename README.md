@@ -30,11 +30,17 @@ CLIENT_SSH_KEY="ssh-keygen additional key for accessing cloud vms user@machine"
 Running `spark shell`
 =====================
 
-  * Create  `spark-env.sh` in `SPARK_HOME/conf` with following contents
+  * Create  `spark-env.sh` in `$SPARK_HOME/conf` with following contents
 
 ```
 export MESOS_NATIVE_LIBRARY=/usr/local/lib/libmesos.so
 export SPARK_EXECUTOR_URI=http://d3kbcqa49mib13.cloudfront.net/spark-1.0.0-bin-hadoop2.tgz
+```
+
+  * Create `java-opts` in `$SPARK_HOME/conf` with following contents
+
+```
+-Djava.net.preferIPv4Stack=true
 ```
 
   * Run the shell with following command:
