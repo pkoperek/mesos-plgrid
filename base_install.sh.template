@@ -14,7 +14,7 @@ gpg -a --export 07513CAD | apt-key add -
 apt-get update
 apt-get upgrade -y
 
-apt-get install openjdk-7-jdk default-jdk python-setuptools python-protobuf curl htop libsnappy1 libsnappy-dev hadoop hadoop-hdfs libhdfs0 libhdfs0-dev hadoop-yarn hadoop-mapreduce hadoop-client openssl -y
+apt-get install git openjdk-7-jdk default-jdk python-setuptools python-protobuf curl htop libsnappy1 libsnappy-dev hadoop hadoop-hdfs libhdfs0 libhdfs0-dev hadoop-yarn hadoop-mapreduce hadoop-client openssl -y
 
 curl -sSfL http://downloads.mesosphere.io/master/ubuntu/${UBUNTU_VERSION}/${MESOS_VERSION}.deb --output /tmp/mesos.deb
 dpkg -i /tmp/mesos.deb
