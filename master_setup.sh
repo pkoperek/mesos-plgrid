@@ -27,4 +27,11 @@ sudo -u hdfs /usr/lib/hadoop/bin/hadoop namenode -format
 echo "#!/bin/sh -e" > /etc/rc.local
 echo "sudo -u hdfs /usr/lib/hadoop/sbin/hadoop-daemon.sh start namenode" >> /etc/rc.local
 
+# execute custom_master.sh
+if [ -f custom_master.sh ]; then
+	echo "Executing customizations..."
+	chmod +x custom_master.sh
+	./custom_master.sh
+fi
+
 reboot

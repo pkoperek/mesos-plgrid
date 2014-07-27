@@ -52,9 +52,21 @@ echo "Done. Internal IP: ${BASE_IP}"
 
 echo "Setting up base VM..."
 rm -f base_install.sh
+# Add customization scripts if necessary
+FILES_TO_COPY="base_install.sh hadoop-conf"
+if [ -f custom_master.sh ]; then
+	FILES_TO_COPY="${FILES_TO_COPY} custom_master.sh"
+fi
+
+if [ -f custom_slave.sh ]; then
+	FILES_TO_COPY="${FILES_TO_COPY} custom_slave.sh"
+fi
+
+echo "Using following files for configuration: ${FILES_TO_COPY}"
+
 # Using | instead of / because keys can contain /
 sed -e "s|_CLIENT_SSH_KEY_PLACEHOLDER_|${CLIENT_SSH_KEY}|g" base_install.sh.template > base_install.sh
-setupVM "$BASE_IP" "base_install.sh hadoop-conf" "base_install.sh" ""
+setupVM "$BASE_IP" "${FILES_TO_COPY}" "base_install.sh" ""
 echo "Done."
 
 echo "Storing mesos-ready image..."

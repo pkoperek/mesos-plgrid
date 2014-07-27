@@ -27,4 +27,11 @@ echo "zk://master:2181/mesos" > /etc/mesos/zk
 echo "#!/bin/sh -e" > /etc/rc.local
 echo "sudo -u hdfs /usr/lib/hadoop/sbin/hadoop-daemon.sh start datanode" >> /etc/rc.local
 
+# exec custom_slave.sh
+if [ -f custom_slave.sh ]; then
+	echo "Executing customizations..."
+	chmod +x custom_slave.sh
+	./custom_slave.sh
+fi
+
 reboot
