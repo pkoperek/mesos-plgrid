@@ -27,6 +27,13 @@ CLIENT_SSH_KEY="ssh-keygen additional key for accessing cloud vms user@machine"
 
   * Run `./cluster_gen.sh`
 
+Customization of machines
+=========================
+
+If any customization is needed please create `custom_master.sh` or `custom_slave.sh` file respectively.
+Those files should contain any commands which need to be executed at the end of installation - after 
+all other tools have been installed and configured, but before the final reboot.
+
 Running `spark shell`
 =====================
 
