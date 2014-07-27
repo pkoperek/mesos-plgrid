@@ -5,6 +5,10 @@ mv /etc/init/zookeeper.conf /root
 MY_IP=`ifconfig eth0|grep "inet addr"|awk -F":" '{print $2}'| awk '{print $1}'`
 echo "IP=$MY_IP" >> /etc/default/mesos-slave
 
+# more time to download and setup spark
+mkdir /etc/mesos-slave
+echo "15mins" > /etc/mesos-slave/executor_registration_timeout
+
 # hostname
 HOSTNAME="slave$SLAVE_NO"
 echo "${HOSTNAME}" > /etc/hostname
