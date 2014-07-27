@@ -47,6 +47,18 @@ export SPARK_EXECUTOR_URI=http://d3kbcqa49mib13.cloudfront.net/spark-1.0.0-bin-h
 scala> sc.parallelize(1 to 10000).filter(_<10).collect()
 ```
 
+Restarting mesos services
+=========================
+
+To restart/start/stop mesos services on cluster machines use `service` command (comes from Ubuntu `upstart`).
+
+```
+service mesos-slave stop 
+service mesos-slave start
+```
+
+Note: there is no restart command! To restart a service use `stop` and then `start`
+
 Todo:
 =====
 
