@@ -72,6 +72,15 @@ service mesos-slave start
 
 Note: there is no restart command! To restart a service use `stop` and then `start`
 
+Preparing sample datasets without using diskspace for unpacking
+===============================================================
+
+```
+root@master:~# sudo -u hdfs hdfs dfs -mkdir -p /datasets
+root@master:~# sudo -u hdfs hdfs dfs -chown -R root /datasets
+root@master:~# gunzip dataset.txt.gz -c | hdfs dfs -put - /datasets/eurusd_full.txt
+```
+
 Todo:
 =====
 
