@@ -23,7 +23,8 @@ TEMPLATE_NAME="$CLUSTER_NAME-base-$TS"
 MASTER_TEMPLATE_NAME="$CLUSTER_NAME-master-$TS"
 SLAVE_TEMPLATE_NAME="$CLUSTER_NAME-slave-$TS"
 CLUSTER_ACCESS="$CLUSTER_NAME-access.txt"
-
+HOSTS_TMP=hosts.tmp
+ 
 echo -n "Generating base template ($TEMPLATE_NAME)..."
 generateTemplate "$TEMPLATE_NAME" "$IMGID" "$NETID" "$HNAME" "$SSHKEY" "$OUTTMP_F"
 echo Done.
@@ -107,6 +108,9 @@ forwardPort "$MASTER_IP" "22" "MASTER_OUT_IP" "MASTER_OUT_PORT"
 echo "master gui: ${MASTER_GUI_IP}:${MASTER_GUI_PORT}" >> "$CLUSTER_ACCESS"
 echo "Done."
 
+HOSTS_PROPAGATION_LIST="${MASTER_OUT_IP}:${MASTER_OUT_PORT}"
+echo "${MASTER_IP}      master" > ${HOSTS_TMP}
+
 for I in `seq $SLAVES_COUNT`; do 
 	echo "Starting slave: $I"
 	SLAVE_VM_ID=`onetemplate instantiate ${SLAVE_TEMPLATE_ID} | grep ID | awk -F':' '{print $2}'|tr -d ' '`
@@ -119,18 +123,33 @@ for I in `seq $SLAVES_COUNT`; do
 	TMP_SETUP_FILE="tmp_slave_setup.sh"
 	rm -f $TMP_SETUP_FILE
 	echo "#!/bin/bash" >> "$TMP_SETUP_FILE" 
-	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
 	echo "SLAVE_NO=$I" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
-	addToHosts "${MASTER_OUT_IP}" "${MASTER_OUT_PORT}" "${SLAVE_IP}" "slave${I}"
+    echo "${SLAVE_IP}       slave${I}" >> "${HOSTS_TMP}"
 
 	echo -n "slave $I (${SLAVE_IP}): " >> "$CLUSTER_ACCESS"
 	setupVM "$SLAVE_IP" "$TMP_SETUP_FILE" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
+
+	forwardPort "$SLAVE_IP" "22" "SLAVE_OUT_IP" "SLAVE_OUT_PORT"
+    HOSTS_PROPAGATION_LIST="${HOSTS_PROPAGATION_LIST};${SLAVE_OUT_IP}:${SLAVE_OUT_PORT}"
+
 	echo "Done."
 done;
 
+echo "Configuring hosts file on each node..."
+for I in `seq ${SLAVES_COUNT}`; do
+
+    HOSTS_SEND_IP=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f1`
+    HOSTS_SEND_PORT=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f2`
+
+	addToHosts "${HOSTS_SEND_IP}" "${HOSTS_SEND_PORT}" "${HOSTS_TMP}"
+
+done;
+echo "Done."
+
+echo "rm -f $HOSTS_TMP" >> ${CLEAN_UP}
 echo "rm -f $CLUSTER_ACCESS" >> ${CLEAN_UP}
 
 echo "Cleaning up ($OUTTMP_F)"
-rm -f $OUTTMP_F expect.log $MASTER_TMP_OUT $SLAVE_TMP_OUT
+rm -f $OUTTMP_F expect.log $MASTER_TMP_OUT $SLAVE_TMP_OUT ${HOSTS_TMP}
