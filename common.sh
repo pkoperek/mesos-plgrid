@@ -21,12 +21,15 @@ function waitUntilState {
 }
 
 function addToHosts {
-    local MASTER_IP="$1"
-    local MASTER_PORT="$2"
-    local IP_TO_ADD="$3"
-    local HOSTNAME_TO_ADD="$4"
+    local SEND_IP="$1"
+    local SEND_PORT="$2"
+    local FILENAME="$3"
 
-    ssh -oStrictHostKeyChecking=no -p "${MASTER_PORT}" root@"${MASTER_IP}" "echo \"${IP_TO_ADD}       ${HOSTNAME_TO_ADD}\" >> /etc/hosts"
+    local BASENAME=`basename ${FILENAME}`
+    
+    uploadFile "${SEND_IP}" "${SEND_PORT}" "${FILENAME}"
+
+    ssh -oStrictHostKeyChecking=no -p "${SEND_PORT}" root@"${SEND_IP}" "cat /root/${BASENAME} >> /etc/hosts"
 }
 
 function generateTemplate {
