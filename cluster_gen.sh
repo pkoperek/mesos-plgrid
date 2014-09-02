@@ -109,6 +109,7 @@ echo "master gui: ${MASTER_GUI_IP}:${MASTER_GUI_PORT}" >> "$CLUSTER_ACCESS"
 echo "Done."
 
 HOSTS_PROPAGATION_LIST="${MASTER_IP}:${MASTER_PORT}"
+echo "${MASTER_IP}      master" >> ${HOSTS_TMP}
 
 for I in `seq $SLAVES_COUNT`; do 
 	echo "Starting slave: $I"
@@ -122,11 +123,10 @@ for I in `seq $SLAVES_COUNT`; do
 	TMP_SETUP_FILE="tmp_slave_setup.sh"
 	rm -f $TMP_SETUP_FILE
 	echo "#!/bin/bash" >> "$TMP_SETUP_FILE" 
-	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
 	echo "SLAVE_NO=$I" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
-    echo \"${SLAVE_IP}       slave${I}\" >> "${HOSTS_TMP}"
+    echo "${SLAVE_IP}       slave${I}" >> "${HOSTS_TMP}"
 
 	echo -n "slave $I (${SLAVE_IP}): " >> "$CLUSTER_ACCESS"
 	setupVM "$SLAVE_IP" "$TMP_SETUP_FILE" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
@@ -151,4 +151,4 @@ echo "rm -f $HOSTS_TMP" >> ${CLEAN_UP}
 echo "rm -f $CLUSTER_ACCESS" >> ${CLEAN_UP}
 
 echo "Cleaning up ($OUTTMP_F)"
-rm -f $OUTTMP_F expect.log $MASTER_TMP_OUT $SLAVE_TMP_OUT
+rm -f $OUTTMP_F expect.log $MASTER_TMP_OUT $SLAVE_TMP_OUT ${HOSTS_TMP}
