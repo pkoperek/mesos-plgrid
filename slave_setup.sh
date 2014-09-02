@@ -18,7 +18,6 @@ cp /etc/hosts /etc/hosts.old
 sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts > /etc/hosts.new
 echo "${MY_IP}         ${HOSTNAME}" > /etc/hosts
 cat /etc/hosts.new >> /etc/hosts
-echo "${MASTER_IP}	master" >> /etc/hosts
 
 # zookeeper
 echo "zk://master:2181/mesos" > /etc/mesos/zk
