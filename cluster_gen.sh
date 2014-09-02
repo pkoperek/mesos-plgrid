@@ -108,8 +108,8 @@ forwardPort "$MASTER_IP" "22" "MASTER_OUT_IP" "MASTER_OUT_PORT"
 echo "master gui: ${MASTER_GUI_IP}:${MASTER_GUI_PORT}" >> "$CLUSTER_ACCESS"
 echo "Done."
 
-HOSTS_PROPAGATION_LIST="${MASTER_IP}:22"
-echo "${MASTER_IP}      master" >> ${HOSTS_TMP}
+HOSTS_PROPAGATION_LIST="${MASTER_OUT_IP}:${MASTER_OUT_PORT}"
+echo "${MASTER_IP}      master" > ${HOSTS_TMP}
 
 for I in `seq $SLAVES_COUNT`; do 
 	echo "Starting slave: $I"
@@ -131,7 +131,8 @@ for I in `seq $SLAVES_COUNT`; do
 	echo -n "slave $I (${SLAVE_IP}): " >> "$CLUSTER_ACCESS"
 	setupVM "$SLAVE_IP" "$TMP_SETUP_FILE" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
 
-    HOSTS_PROPAGATION_LIST="${HOSTS_PROPAGATION_LIST};${SLAVE_IP}:22"
+	forwardPort "$SLAVE_IP" "22" "SLAVE_OUT_IP" "SLAVE_OUT_PORT"
+    HOSTS_PROPAGATION_LIST="${HOSTS_PROPAGATION_LIST};${SLAVE_OUT_IP}:${SLAVE_OUT_PORT}"
 
 	echo "Done."
 done;
