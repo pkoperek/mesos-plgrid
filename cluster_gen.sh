@@ -157,6 +157,7 @@ for I in `seq ${MACHINES_TO_REBOOT}`; do
 	VM_TO_REBOOT=`echo ${VMS_TO_REBOOT}|cut -d";" -f${I}`
 	echo "Rebooting ${VM_TO_REBOOT}..."
 	onevm reboot ${VM_TO_REBOOT}
+	waitUntilState ${VM_TO_REBOOT} "ACTIVE"
 done;
 echo "Done."
 
