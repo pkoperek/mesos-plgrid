@@ -108,13 +108,8 @@ forwardPort "$MASTER_IP" "22" "MASTER_OUT_IP" "MASTER_OUT_PORT"
 echo "master gui: ${MASTER_GUI_IP}:${MASTER_GUI_PORT}" >> "$CLUSTER_ACCESS"
 echo "Done."
 
-<<<<<<< HEAD
 HOSTS_PROPAGATION_LIST="${MASTER_OUT_IP}:${MASTER_OUT_PORT}"
 echo "${MASTER_IP}      master" > ${HOSTS_TMP}
-=======
-HOSTS_PROPAGATION_LIST="${MASTER_IP}:${MASTER_PORT}"
-echo "${MASTER_IP}      master" >> ${HOSTS_TMP}
->>>>>>> e6ceac4000e87e9b688c41031f002e66bebd5a5a
 
 for I in `seq $SLAVES_COUNT`; do 
 	echo "Starting slave: $I"
@@ -128,6 +123,7 @@ for I in `seq $SLAVES_COUNT`; do
 	TMP_SETUP_FILE="tmp_slave_setup.sh"
 	rm -f $TMP_SETUP_FILE
 	echo "#!/bin/bash" >> "$TMP_SETUP_FILE" 
+	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
 	echo "SLAVE_NO=$I" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
