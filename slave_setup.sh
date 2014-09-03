@@ -33,5 +33,3 @@ if [ -f custom_slave.sh ]; then
 	chmod +x custom_slave.sh
 	./custom_slave.sh
 fi
-
-reboot

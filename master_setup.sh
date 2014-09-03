@@ -33,5 +33,3 @@ if [ -f custom_master.sh ]; then
 	chmod +x custom_master.sh
 	./custom_master.sh
 fi
-
-reboot
