@@ -108,6 +108,7 @@ forwardPort "$MASTER_IP" "22" "MASTER_OUT_IP" "MASTER_OUT_PORT"
 echo "master gui: ${MASTER_GUI_IP}:${MASTER_GUI_PORT}" >> "$CLUSTER_ACCESS"
 echo "Done."
 
+VMS_TO_REBOOT="${MASTER_VM_ID}"
 HOSTS_PROPAGATION_LIST="${MASTER_OUT_IP}:${MASTER_OUT_PORT}"
 echo "${MASTER_IP}      master" > ${HOSTS_TMP}
 
@@ -132,19 +133,30 @@ for I in `seq $SLAVES_COUNT`; do
 	setupVM "$SLAVE_IP" "$TMP_SETUP_FILE" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
 
 	forwardPort "$SLAVE_IP" "22" "SLAVE_OUT_IP" "SLAVE_OUT_PORT"
-    HOSTS_PROPAGATION_LIST="${HOSTS_PROPAGATION_LIST};${SLAVE_OUT_IP}:${SLAVE_OUT_PORT}"
+    	HOSTS_PROPAGATION_LIST="${HOSTS_PROPAGATION_LIST};${SLAVE_OUT_IP}:${SLAVE_OUT_PORT}"
+	VMS_TO_REBOOT="${VMS_TO_REBOOT};${SLAVE_VM_ID}"
 
 	echo "Done."
 done;
 
 echo "Configuring hosts file on each node..."
-for I in `seq ${SLAVES_COUNT}`; do
+MACHINES_TO_CONFIGURE=`echo "${SLAVES_COUNT}+1"|bc`
+for I in `seq ${MACHINES_TO_CONFIGURE}`; do
 
-    HOSTS_SEND_IP=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f1`
-    HOSTS_SEND_PORT=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f2`
+	HOSTS_SEND_IP=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f1`
+	HOSTS_SEND_PORT=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f2`
 
 	addToHosts "${HOSTS_SEND_IP}" "${HOSTS_SEND_PORT}" "${HOSTS_TMP}"
 
+done;
+echo "Done."
+
+echo "Rebooting all nodes..."
+MACHINES_TO_REBOOT=`echo "${SLAVES_COUNT}+1"|bc`
+for I in `seq ${MACHINES_TO_REBOOT}`; do
+	VM_TO_REBOOT=`echo ${VMS_TO_REBOOT}|cut -d";" -f${I}`
+	echo "Rebooting ${VM_TO_REBOOT}..."
+	onevm reboot ${VM_TO_REBOOT}
 done;
 echo "Done."
 
