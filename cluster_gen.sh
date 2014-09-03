@@ -123,7 +123,6 @@ for I in `seq $SLAVES_COUNT`; do
 	TMP_SETUP_FILE="tmp_slave_setup.sh"
 	rm -f $TMP_SETUP_FILE
 	echo "#!/bin/bash" >> "$TMP_SETUP_FILE" 
-	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
 	echo "SLAVE_NO=$I" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
