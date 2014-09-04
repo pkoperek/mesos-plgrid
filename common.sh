@@ -16,6 +16,9 @@ function rebootVM {
 
 	MONITOR=`ssh -oStrictHostKeyChecking=no -p "${VM_PORT}" root@"${VM_IP}" "ls"`
 
+	echo "Waiting for ${VM_IP} to start..."
+	sleep 5
+
 	$MONITOR
         while [ "$?" != "0" ]; do
                 echo "Not started yet - waiting ..." 
