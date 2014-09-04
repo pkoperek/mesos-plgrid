@@ -9,23 +9,30 @@ function getStatus {
 }
 
 function rebootVM {
+	set +eu
 	local VM_IP="$1"
 	local VM_PORT="$2"
 	
-	ssh -oStrictHostKeyChecking=no -p "${VM_PORT}" root@"${VM_IP}" "reboot"	
-
-	MONITOR=`ssh -oStrictHostKeyChecking=no -p "${VM_PORT}" root@"${VM_IP}" "ls"`
-
-	echo "Waiting for ${VM_IP} to start..."
-	sleep 5
-
-	$MONITOR
-        while [ "$?" != "0" ]; do
-                echo "Not started yet - waiting ..." 
+	REBOOT_CMD="ssh -oStrictHostKeyChecking=no -oBatchMode=yes -p ${VM_PORT} root@${VM_IP} reboot"
+	${REBOOT_CMD}
+	while [ "$?" != "0" ]; do
+		echo "Not rebooted - attempt to reboot in 3 ..." 
                 sleep 3
-                $MONITOR
+		${REBOOT_CMD}
         done
 
+	MONITOR="ssh -oBatchMode=yes -oStrictHostKeyChecking=no -p ${VM_PORT} root@${VM_IP} ps aux|grep java|grep -v grep|wc -l"
+
+	echo "Waiting for ${VM_IP} ${VM_PORT} to start..."
+	sleep 5
+
+	RES=`$MONITOR`
+        while [ "${RES}" == "0" ]; do
+                echo "Not started yet - waiting ..." 
+                sleep 3
+                RES=`$MONITOR`
+        done
+	set -eu
 }
 
 function waitUntilState {
