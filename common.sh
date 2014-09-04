@@ -8,6 +8,13 @@ function getStatus {
 	eval "$2='${STATUS}'"
 }
 
+function rebootVM {
+	local VM_IP="$1"
+	local VM_PORT="$2"
+	
+	ssh -oStrictHostKeyChecking=no -p "${VM_PORT}" root@"${VM_IP}" "reboot"	
+}
+
 function waitUntilState {
 	local VM_ID=$1
 	local VM_STATUS=""
