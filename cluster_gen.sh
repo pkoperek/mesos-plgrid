@@ -150,7 +150,7 @@ done;
 echo "Done."
 
 echo "Rebooting all nodes..."
-MACHINES_TO_REBOOT="${MACHINES_TO_COONF}"
+MACHINES_TO_REBOOT="${MACHINES_TO_CONFIGURE}"
 for I in `seq ${MACHINES_TO_REBOOT}`; do
 	HOSTS_SEND_IP=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f1`
 	HOSTS_SEND_PORT=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f2`
