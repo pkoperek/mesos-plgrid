@@ -21,7 +21,7 @@ function rebootVM {
 		${REBOOT_CMD}
         done
 
-	MONITOR="ssh -oBatchMode=yes -oStrictHostKeyChecking=no -p ${VM_PORT} root@${VM_IP} ps aux|grep java|grep -v grep|wc -l"
+	MONITOR="ssh -oBatchMode=yes -oStrictHostKeyChecking=no -p ${VM_PORT} root@${VM_IP} ps aux|grep hdfs|grep -v grep|wc -l"
 
 	echo "Waiting for ${VM_IP} ${VM_PORT} to start..."
 	sleep 5
