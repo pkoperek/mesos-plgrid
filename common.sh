@@ -13,6 +13,16 @@ function rebootVM {
 	local VM_PORT="$2"
 	
 	ssh -oStrictHostKeyChecking=no -p "${VM_PORT}" root@"${VM_IP}" "reboot"	
+
+	MONITOR=`ssh -oStrictHostKeyChecking=no -p "${VM_PORT}" root@"${VM_IP}" "ls"`
+
+	$MONITOR
+        while [ "$?" != "0" ]; do
+                echo "Not started yet - waiting ..." 
+                sleep 3
+                $MONITOR
+        done
+
 }
 
 function waitUntilState {
