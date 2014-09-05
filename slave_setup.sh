@@ -15,7 +15,7 @@ echo "${HOSTNAME}" > /etc/hostname
 
 # /etc/hosts
 cp /etc/hosts /etc/hosts.old
-sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts > /etc/hosts.new
+sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts | sed s/"127.0.1.1"/"#127.0.1.1"/g > /etc/hosts.new
 echo "${MY_IP}         ${HOSTNAME}" > /etc/hosts
 cat /etc/hosts.new >> /etc/hosts
 
