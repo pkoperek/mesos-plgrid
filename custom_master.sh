@@ -11,3 +11,14 @@ echo "export SPARK_EXECUTOR_URI=http://d3kbcqa49mib13.cloudfront.net/spark-1.0.0
 echo "-Djava.net.preferIPv4Stack=true" >> "${SPARK_VERSION}/conf/java-opts"
 
 git clone https://github.com/pkoperek/nibbler.git
+
+cat <<EOF > automate.sh
+#!/bin/bash
+sudo -u hdfs hdfs dfs -mkdir /datasets
+sudo -u hdfs hdfs dfs -chown root:root /datasets
+pushd nibbler
+./gradlew distZip
+unzip build/distributions/nibbler.zip
+EOF
+
+chmod +x automate.sh
