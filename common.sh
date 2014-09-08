@@ -2,6 +2,10 @@
 
 set -eu
 
+SSH_OPTIONS="-oStrictHostKeyChecking=no -oBatchMode=yes"
+SSH_CMD="ssh $SSH_OPTIONS"
+SCP_CMD="scp $SSH_OPTIONS"
+
 function getStatus {
 	local VM_ID=$1
 	local STATUS=`onevm show ${VM_ID}|grep ^STATE|awk -F':' '{print $2}'| tr -d ' '`
@@ -13,7 +17,7 @@ function rebootVM {
 	local VM_IP="$1"
 	local VM_PORT="$2"
 	
-	REBOOT_CMD="ssh -oStrictHostKeyChecking=no -oBatchMode=yes -p ${VM_PORT} root@${VM_IP} reboot"
+	REBOOT_CMD="$SSH_CMD -p ${VM_PORT} root@${VM_IP} reboot"
 	${REBOOT_CMD}
 	while [ "$?" != "0" ]; do
 		echo "Not rebooted - attempt to reboot in 3 ..." 
@@ -21,7 +25,7 @@ function rebootVM {
 		${REBOOT_CMD}
         done
 
-	MONITOR="ssh -oBatchMode=yes -oStrictHostKeyChecking=no -p ${VM_PORT} root@${VM_IP} ps aux|grep hdfs|grep -v grep|wc -l"
+	MONITOR="$SSH_CMD -p ${VM_PORT} root@${VM_IP} ps aux|grep hdfs|grep -v grep|wc -l"
 
 	echo "Waiting for ${VM_IP} ${VM_PORT} to start..."
 	sleep 5
@@ -56,7 +60,7 @@ function addToHosts {
     
     uploadFile "${SEND_IP}" "${SEND_PORT}" "${FILENAME}"
 
-    ssh -oStrictHostKeyChecking=no -p "${SEND_PORT}" root@"${SEND_IP}" "cat /root/${BASENAME} >> /etc/hosts"
+    $SSH_CMD -p "${SEND_PORT}" root@"${SEND_IP}" "cat /root/${BASENAME} >> /etc/hosts"
 }
 
 function generateTemplate {
@@ -97,7 +101,7 @@ function uploadFile {
 	local PORT="$2"
 	local FILE="$3"
 
-	SCP="scp -oBatchMode=yes -oStrictHostKeyChecking=no -r -P ${PORT} ${FILE} root@${IP}:"
+	SCP="$SCP_CMD -r -P ${PORT} ${FILE} root@${IP}:"
          
 	$SCP
 	while [ "$?" != "0" ]; do
@@ -151,7 +155,7 @@ function setupVM {
 	echo "Done."
  
 	echo -n "Executing script ($SETUP_SCRIPT)..."
-	ssh -oStrictHostKeyChecking=no -p "$SETUP_PORT_OUT" root@"${SETUP_IP_OUT}" "chmod +x ${SETUP_SCRIPT} && ./${SETUP_SCRIPT}" >& execution.log
+	$SSH_CMD -p "$SETUP_PORT_OUT" root@"${SETUP_IP_OUT}" "chmod +x ${SETUP_SCRIPT} && ./${SETUP_SCRIPT}" >& execution.log
 	echo "Done."
 }
 
