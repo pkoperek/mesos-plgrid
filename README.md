@@ -77,4 +77,3 @@ Todo:
 
   * use `CLUSTER` /etc/default/mesos-* setting as cluster name
   * fail with meaningful message when image isn't stored correctly
-  * add  '--executor_registration_timeout=10mins' on slaves - downloading spark takes more than 1min
