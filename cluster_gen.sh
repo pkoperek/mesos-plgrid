@@ -123,7 +123,6 @@ for I in `seq $SLAVES_COUNT`; do
 	TMP_SETUP_FILE="tmp_slave_setup.sh"
 	rm -f $TMP_SETUP_FILE
 	echo "#!/bin/bash" >> "$TMP_SETUP_FILE" 
-	echo "MASTER_IP=${MASTER_IP}" >> "$TMP_SETUP_FILE"
 	echo "SLAVE_NO=$I" >> "$TMP_SETUP_FILE"
 	cat "slave_setup.sh" >> "$TMP_SETUP_FILE"
 
@@ -133,19 +132,31 @@ for I in `seq $SLAVES_COUNT`; do
 	setupVM "$SLAVE_IP" "$TMP_SETUP_FILE" "$TMP_SETUP_FILE" "$CLUSTER_ACCESS"
 
 	forwardPort "$SLAVE_IP" "22" "SLAVE_OUT_IP" "SLAVE_OUT_PORT"
-	HOSTS_PROPAGATION_LIST="${HOSTS_PROPAGATION_LIST};${SLAVE_OUT_IP}:${SLAVE_OUT_PORT}"
+    	HOSTS_PROPAGATION_LIST="${HOSTS_PROPAGATION_LIST};${SLAVE_OUT_IP}:${SLAVE_OUT_PORT}"
 
 	echo "Done."
 done;
 
 echo "Configuring hosts file on each node..."
-for I in `seq ${SLAVES_COUNT}`; do
+MACHINES_TO_CONFIGURE=`echo "${SLAVES_COUNT}+1"|bc`
+for I in `seq ${MACHINES_TO_CONFIGURE}`; do
 
-    HOSTS_SEND_IP=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f1`
-    HOSTS_SEND_PORT=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f2`
+	HOSTS_SEND_IP=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f1`
+	HOSTS_SEND_PORT=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f2`
 
 	addToHosts "${HOSTS_SEND_IP}" "${HOSTS_SEND_PORT}" "${HOSTS_TMP}"
 
+done;
+echo "Done."
+
+echo "Rebooting all nodes..."
+MACHINES_TO_REBOOT="${MACHINES_TO_CONFIGURE}"
+for I in `seq ${MACHINES_TO_REBOOT}`; do
+	HOSTS_SEND_IP=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f1`
+	HOSTS_SEND_PORT=`echo ${HOSTS_PROPAGATION_LIST}| cut -d";" -f${I} | cut -d":" -f2`
+
+	echo "Rebooting ${HOSTS_SEND_IP} ${HOSTS_SEND_PORT}..."
+	rebootVM "${HOSTS_SEND_IP}" "${HOSTS_SEND_PORT}"
 done;
 echo "Done."
 

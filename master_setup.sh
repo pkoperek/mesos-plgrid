@@ -10,7 +10,7 @@ echo "IP=$MY_IP" >> /etc/default/mesos-master
 echo "master" > /etc/hostname
 
 cp /etc/hosts /etc/hosts.old
-sed s/plgubuntu/master/g /etc/hosts > /etc/hosts.new
+sed s/plgubuntu/master/g /etc/hosts | sed s/"127.0.1.1"/"#127.0.1.1"/g > /etc/hosts.new
 echo "${MY_IP}          master" > /etc/hosts
 cat /etc/hosts.new >> /etc/hosts
 
@@ -33,5 +33,3 @@ if [ -f custom_master.sh ]; then
 	chmod +x custom_master.sh
 	./custom_master.sh
 fi
-
-reboot

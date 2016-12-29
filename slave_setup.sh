@@ -15,10 +15,9 @@ echo "${HOSTNAME}" > /etc/hostname
 
 # /etc/hosts
 cp /etc/hosts /etc/hosts.old
-sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts > /etc/hosts.new
+sed s/plgubuntu/"${HOSTNAME}"/g /etc/hosts | sed s/"127.0.1.1"/"#127.0.1.1"/g > /etc/hosts.new
 echo "${MY_IP}         ${HOSTNAME}" > /etc/hosts
 cat /etc/hosts.new >> /etc/hosts
-echo "${MASTER_IP}	master" >> /etc/hosts
 
 # zookeeper
 echo "zk://master:2181/mesos" > /etc/mesos/zk
@@ -33,5 +32,3 @@ if [ -f custom_slave.sh ]; then
 	chmod +x custom_slave.sh
 	./custom_slave.sh
 fi
-
-reboot
